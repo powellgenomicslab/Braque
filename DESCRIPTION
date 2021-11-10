@@ -9,6 +9,7 @@ Description: This package provides a set of methods to standardize differential
 License: MIT
 Encoding: UTF-8
 LazyData: true
-Depends: 
-  data.table
+Imports: 
+  data.table,
+  Seurat
 RoxygenNote: 7.1.2
