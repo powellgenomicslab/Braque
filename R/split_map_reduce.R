@@ -29,9 +29,27 @@ split_matrix <- function(object, by, slot = "counts"){
   i <- match(by, names(meta.data))
   if(any(is.na(i))) stop('"', paste0(by[is.na(i)], collapse = ", "),
                          "' not present in metadata")
-  meta.data <- meta.data[,i, drop = FALSE]
+
   barcodes <- rownames(meta.data)
   meta.data <- as.data.table(meta.data, keep.rownames = "barcode")
+
+
+  # Determine unique values for each column by groups
+  meta_vars <- meta.data[, !"barcode"][, .(vars = list(lapply(.SD, unique))), by]
+
+  # Determine if columns can be collapse by group with a single value
+  meta_vars <- sapply(meta_vars$vars, sapply, length)
+  meta_vars <- apply(meta_vars, 1, function(x) all(x == 1))
+  meta_vars <- names(which(meta_vars))
+
+  # Subset meta variables
+  meta_vars_cols <- meta_vars
+  meta_vars <- meta.data[, c(by, meta_vars), with = FALSE]
+  meta_vars <- unique(meta_vars)
+
+
+  # Subset grouping variables
+  meta.data <- meta.data[,c("barcode", by), with = FALSE]
 
   # Convert grouping variables to character
   for (j in seq_len(ncol(meta.data))){
@@ -84,6 +102,10 @@ split_matrix <- function(object, by, slot = "counts"){
   meta_reference <- lapply(set, function(x) unique(x$meta.data[, ..by]))
   meta_reference <- rbindlist(meta_reference)
   meta_reference[, matrix := set_data]
+
+  # Add group meta variables
+  meta_reference <- merge(meta_reference, meta_vars, by = by)
+  setcolorder(meta_reference, c(by, meta_vars_cols, "matrix"))
 
   # Add grouping information and signature to final object
   #attr(meta_reference, "by") <- meta_order
@@ -192,20 +214,21 @@ reduce_seurat <- function(object){
   levels <- attr(object, "by")
   n <- length(levels)
 
+  last_level <- levels[n]
+
+
   if(n == 1){
     res <- list(object)
   }else{
     res <- split(object, object[[last_level]])
   }
 
-
   res <- lapply(res, function(x){
     m <- as.data.frame(x$result)
     names(m) <- apply(x[, ..levels], 1, paste0, collapse = ".")
-    md <- as.data.frame(x[, ..columns])
+    md <- as.data.frame(x[, !c("matrix", "result")])
     rownames(md) <- names(m)
-    md$orig.ident <- paste0(levels, collapse = ".")
-    x <- CreateSeuratObject(counts = m, meta.data = md)
+    CreateSeuratObject(counts = m, meta.data = md)
 
   })
 
