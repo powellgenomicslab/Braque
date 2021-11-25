@@ -7,13 +7,13 @@
 map_matrix(object, f)
 }
 \arguments{
-\item{object}{A tibble object created with  \code{split_matrix}}
+\item{object}{A data.table object created with  \code{split_matrix}}
 
 \item{f}{Function to apply to each expression matrix. Function must be
 applied to genes (row-wise manner, e.g. Matrix::rowMeans()).}
 }
 \value{
-A tibble containing an extra column called \code{result} containing
+A data.table containing an extra column called \code{result} containing
 the output of the provided function
 }
 \description{

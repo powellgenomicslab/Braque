@@ -3,6 +3,7 @@
 export(create_dge)
 export(map_matrix)
 export(reduce_matrix)
+export(reduce_seurat)
 export(split_matrix)
 exportClasses("dge-pair")
 exportMethods("$")

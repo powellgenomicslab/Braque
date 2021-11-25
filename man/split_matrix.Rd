@@ -2,7 +2,7 @@
 % Please edit documentation in R/split_map_reduce.R
 \name{split_matrix}
 \alias{split_matrix}
-\title{Split expresion matrix by groups}
+\title{Split expression matrix by groups}
 \usage{
 split_matrix(object, by, slot = "counts")
 }
@@ -16,7 +16,7 @@ stored in the \code{@metadata} slot}
 ("counts", "data", or "scale.data")}
 }
 \value{
-A tibble containing the group variables and the split matrices
+A data.table containing the group variables and the split matrices
 }
 \description{
 Splits an expression matrix from a Seurat object based on
