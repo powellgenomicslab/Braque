@@ -1,4 +1,4 @@
-#' @title Split expresion matrix by groups
+#' @title Split expression matrix by groups
 #' @description Splits an expression matrix from a Seurat object based on
 #' a set of columns stored in the metadata
 #' @author Jose Alquicira-Hernandez
@@ -7,7 +7,7 @@
 #' stored in the \code{@metadata} slot
 #' @param slot Expression matrix to split by groups:
 #' ("counts", "data", or "scale.data")
-#' @return A tibble containing the group variables and the split matrices
+#' @return A data.table containing the group variables and the split matrices
 #' @export
 #' @importFrom Seurat GetAssayData SplitObject
 #' @importFrom data.table data.table as.data.table set setnames setattr "%chin%" rbindlist
@@ -97,10 +97,10 @@ split_matrix <- function(object, by, slot = "counts"){
 #' @description Applies function to each group matrix after running
 #' \code{split_matrix}.
 #' @author Jose Alquicira-Hernandez
-#' @param object A tibble object created with  \code{split_matrix}
+#' @param object A data.table object created with  \code{split_matrix}
 #' @param f Function to apply to each expression matrix. Function must be
 #' applied to genes (row-wise manner, e.g. Matrix::rowMeans()).
-#' @return A tibble containing an extra column called \code{result} containing
+#' @return A data.table containing an extra column called \code{result} containing
 #' the output of the provided function
 #' @export
 #' @importFrom future.apply future_lapply
@@ -121,7 +121,7 @@ map_matrix <- function(object, f){
 #' results follows the order provided via \code{by} when running
 #' \code{split_matrix}.
 #' @author Jose Alquicira-Hernandez
-#' @param object A tibble object created and processed with \code{split_matrix}
+#' @param object A data.table object created and processed with \code{split_matrix}
 #' and \code{map_matrix}
 #' @return A matrix containing the combined results
 #' @export
@@ -164,3 +164,53 @@ reduce_matrix <- function(object, column = TRUE){
   res
 
 }
+
+
+#' @title Gather results across groups
+#' @description Combines output results after running \code{map_matrix}. This
+#' function assumes the results consist on output vectors generated from
+#' applying a function operating in matrices. The grouping hierarchy in the
+#' results follows the order provided via \code{by} when running
+#' \code{split_matrix}.
+#' @author Jose Alquicira-Hernandez
+#' @param object A data.table object created and processed with \code{split_matrix}
+#' and \code{map_matrix}
+#' @return A list containing Seurat objects corresponding to each of the groups
+#' @export
+#' @examples
+#' data <- SeuratObject::pbmc_small
+#' group_mats <- split_matrix(data, by = c("groups", "RNA_snn_res.1"))
+#' group_mats <- map_matrix(group_mats, Matrix::rowMeans)
+#' reduce_seurat(group_mats)
+
+
+reduce_seurat <- function(object){
+
+  if(!"result" %in% names(object))
+    stop("`map_matrix` has not been run yet")
+
+  levels <- attr(object, "by")
+  n <- length(levels)
+
+  if(n == 1){
+    res <- list(object)
+  }else{
+    res <- split(object, object[[last_level]])
+  }
+
+
+  res <- lapply(res, function(x){
+    m <- as.data.frame(x$result)
+    names(m) <- apply(x[, ..levels], 1, paste0, collapse = ".")
+    md <- as.data.frame(x[, ..columns])
+    rownames(md) <- names(m)
+    md$orig.ident <- paste0(levels, collapse = ".")
+    x <- CreateSeuratObject(counts = m, meta.data = md)
+
+  })
+
+  res
+
+}
+
+
