@@ -6,11 +6,16 @@
 \usage{
 prop(object)
 }
-\description{
-Retrieve proportion of gene expression per sample
+\arguments{
+\item{object}{\code{Seurat} object}
 }
-\section{Functions}{
-\itemize{
-\item \code{prop}: Retrieve proportion of gene expression per sample
-}}
-
+\value{
+A data.frame containing proportion of gene expression per sample
+}
+\description{
+Retrieve proportion of gene expression per sample from a
+Seurat object processed with \code{metaSeurat}
+}
+\author{
+Jose Alquicira Hernandez
+}

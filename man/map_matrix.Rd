@@ -21,9 +21,9 @@ Applies function to each group matrix after running
 \code{split_matrix}.
 }
 \examples{
-data <- Seurat::pbmc_small
+data <- SeuratObject::pbmc_small
 group_mats <- split_matrix(data, by = c("groups", "RNA_snn_res.1"))
-group_mats <- split_matrix(group_mats, Matrix::rowMeans)
+group_mats <- map_matrix(group_mats, Matrix::rowMeans)
 }
 \author{
 Jose Alquicira-Hernandez

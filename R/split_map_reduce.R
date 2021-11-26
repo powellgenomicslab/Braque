@@ -9,10 +9,11 @@
 #' ("counts", "data", or "scale.data")
 #' @return A data.table containing the group variables and the split matrices
 #' @export
+#' @importFrom methods is
 #' @importFrom SeuratObject GetAssayData
 #' @importFrom data.table data.table as.data.table set setnames setattr "%chin%" rbindlist setcolorder
 #' @examples
-#' data <- Seurat::pbmc_small
+#' data <- SeuratObject::pbmc_small
 #' split_matrix(data, by = c("groups", "RNA_snn_res.1"))
 
 split_matrix <- function(object, by, slot = "counts"){
@@ -127,11 +128,12 @@ split_matrix <- function(object, by, slot = "counts"){
 #' applied to genes (row-wise manner, e.g. Matrix::rowMeans()).
 #' @return A data.table containing an extra column called \code{result} containing
 #' the output of the provided function
+#' @importFrom data.table ":="
 #' @export
 #' @examples
-#' data <- Seurat::pbmc_small
+#' data <- SeuratObject::pbmc_small
 #' group_mats <- split_matrix(data, by = c("groups", "RNA_snn_res.1"))
-#' group_mats <- split_matrix(group_mats, Matrix::rowMeans)
+#' group_mats <- map_matrix(group_mats, Matrix::rowMeans)
 
 map_matrix <- function(object, f){
   object[, result := lapply(matrix, f)]
@@ -147,6 +149,7 @@ map_matrix <- function(object, f){
 #' @author Jose Alquicira-Hernandez
 #' @param object A data.table object created and processed with \code{split_matrix}
 #' and \code{map_matrix}
+#' @param column Return samples as columns
 #' @return A matrix containing the combined results
 #' @export
 #' @examples
@@ -200,7 +203,7 @@ reduce_matrix <- function(object, column = TRUE){
 #' @param object A data.table object created and processed with \code{split_matrix}
 #' and \code{map_matrix}
 #' @return A list containing Seurat objects corresponding to each of the groups
-#' @importFrom Seurat CreateSeuratObject
+#' @importFrom SeuratObject CreateSeuratObject
 #' @export
 #' @examples
 #' data <- SeuratObject::pbmc_small

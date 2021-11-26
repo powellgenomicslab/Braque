@@ -4,12 +4,13 @@ Title: Differential expression analysis for population single-cell data
 Version: 0.1.0
 Author: Jose Alquicira Hernandez
 Maintainer: Jose Alquicira Hernandez <alquicirajose@gmail.com>
-Description: This package provides a set of methods to standardize differential 
-    expression analysis for population-scale single cell data
-License: MIT
+Description: This package provides a set of methods to analyze population-scale single cell data
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Imports: 
   data.table,
-  SeuratObject
+  SeuratObject,
+  Matrix,
+  methods
 RoxygenNote: 7.1.2

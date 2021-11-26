@@ -9,6 +9,8 @@ reduce_matrix(object, column = TRUE)
 \arguments{
 \item{object}{A data.table object created and processed with \code{split_matrix}
 and \code{map_matrix}}
+
+\item{column}{Return samples as columns}
 }
 \value{
 A matrix containing the combined results

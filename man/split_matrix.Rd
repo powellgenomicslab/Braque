@@ -23,7 +23,7 @@ Splits an expression matrix from a Seurat object based on
 a set of columns stored in the metadata
 }
 \examples{
-data <- Seurat::pbmc_small
+data <- SeuratObject::pbmc_small
 split_matrix(data, by = c("groups", "RNA_snn_res.1"))
 }
 \author{
