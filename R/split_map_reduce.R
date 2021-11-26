@@ -219,6 +219,8 @@ reduce_seurat <- function(object){
 
   last_level <- levels[n]
 
+  # Calculate percentage of gene expression per group
+  object[, prop_exp := lapply(matrix, function(x) Matrix::rowSums(x > 0) / ncol(x))]
 
   if(n == 1){
     res <- list(object)
@@ -226,16 +228,19 @@ reduce_seurat <- function(object){
     res <- split(object, object[[last_level]])
   }
 
+
   res <- lapply(res, function(x){
     m <- as.data.frame(x$result)
     names(m) <- apply(x[, ..levels], 1, paste0, collapse = ".")
     md <- as.data.frame(x[, !c("matrix", "result")])
     rownames(md) <- names(m)
-    CreateSeuratObject(counts = m, meta.data = md)
-
+    seurat_obj <- CreateSeuratObject(counts = m, meta.data = md)
+    prop_exp <- as.data.frame(x$prop_exp)
+    colnames(prop_exp) <- names(m)
+    seurat_obj@misc$prop_exp <-  prop_exp
+    seurat_obj
   })
 
-  res
 
 }
 
