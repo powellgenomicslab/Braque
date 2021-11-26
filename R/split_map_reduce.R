@@ -10,7 +10,7 @@
 #' @return A data.table containing the group variables and the split matrices
 #' @export
 #' @importFrom Seurat GetAssayData SplitObject
-#' @importFrom data.table data.table as.data.table set setnames setattr "%chin%" rbindlist
+#' @importFrom data.table data.table as.data.table set setnames setattr "%chin%" rbindlist setcolorder
 #' @examples
 #' data <- Seurat::pbmc_small
 #' split_matrix(data, by = c("groups", "RNA_snn_res.1"))
@@ -33,6 +33,8 @@ split_matrix <- function(object, by, slot = "counts"){
   barcodes <- rownames(meta.data)
   meta.data <- as.data.table(meta.data, keep.rownames = "barcode")
 
+  # Get number of cells per group
+  n_cells <- meta.data[, .N, by]
 
   # Determine unique values for each column by groups
   meta_vars <- meta.data[, !"barcode"][, .(vars = list(lapply(.SD, unique))), by]
@@ -103,9 +105,10 @@ split_matrix <- function(object, by, slot = "counts"){
   meta_reference <- rbindlist(meta_reference)
   meta_reference[, matrix := set_data]
 
-  # Add group meta variables
+  # Add group meta variables and number of cells
   meta_reference <- merge(meta_reference, meta_vars, by = by)
-  setcolorder(meta_reference, c(by, meta_vars_cols, "matrix"))
+  meta_reference <- merge(meta_reference, n_cells, by = by)
+  setcolorder(meta_reference, c(by, meta_vars_cols, "N", "matrix"))
 
   # Add grouping information and signature to final object
   #attr(meta_reference, "by") <- meta_order
