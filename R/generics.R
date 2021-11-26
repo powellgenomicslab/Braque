@@ -1,12 +1,5 @@
-#' @title Retrieve metadata
-#' @describeIn metadata Retrieve metadata
-setGeneric("metadata",  function(object) {
-  standardGeneric("metadata")
+#' @title Retrieve proportion of gene expression per sample
+#' @describeIn prop Retrieve proportion of gene expression per sample
+setGeneric("prop",  function(object) {
+  standardGeneric("prop")
 })
-
-#' @title Retrieve expression data
-#' @describeIn expr Retrieve expression data
-setGeneric("expr",  function(object) {
-  standardGeneric("expr")
-})
-

@@ -9,7 +9,7 @@
 #' ("counts", "data", or "scale.data")
 #' @return A data.table containing the group variables and the split matrices
 #' @export
-#' @importFrom Seurat GetAssayData SplitObject
+#' @importFrom SeuratObject GetAssayData
 #' @importFrom data.table data.table as.data.table set setnames setattr "%chin%" rbindlist setcolorder
 #' @examples
 #' data <- Seurat::pbmc_small
@@ -128,7 +128,6 @@ split_matrix <- function(object, by, slot = "counts"){
 #' @return A data.table containing an extra column called \code{result} containing
 #' the output of the provided function
 #' @export
-#' @importFrom future.apply future_lapply
 #' @examples
 #' data <- Seurat::pbmc_small
 #' group_mats <- split_matrix(data, by = c("groups", "RNA_snn_res.1"))
@@ -201,6 +200,7 @@ reduce_matrix <- function(object, column = TRUE){
 #' @param object A data.table object created and processed with \code{split_matrix}
 #' and \code{map_matrix}
 #' @return A list containing Seurat objects corresponding to each of the groups
+#' @importFrom Seurat CreateSeuratObject
 #' @export
 #' @examples
 #' data <- SeuratObject::pbmc_small
@@ -237,7 +237,7 @@ reduce_seurat <- function(object){
     seurat_obj <- CreateSeuratObject(counts = m, meta.data = md)
     prop_exp <- as.data.frame(x$prop_exp)
     colnames(prop_exp) <- names(m)
-    seurat_obj@misc$prop_exp <-  prop_exp
+    seurat_obj@misc$prop <- prop_exp
     seurat_obj
   })
 
