@@ -1,6 +1,6 @@
-Package: popdea
+Package: metaSeurat
 Type: Package
-Title: Differential expression analysis for population single-cell data
+Title: Analysis of population-scale single cell data
 Version: 0.1.0
 Author: Jose Alquicira Hernandez
 Maintainer: Jose Alquicira Hernandez <alquicirajose@gmail.com>
