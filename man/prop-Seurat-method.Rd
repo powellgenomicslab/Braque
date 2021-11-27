@@ -14,7 +14,7 @@ A data.frame containing proportion of gene expression per sample
 }
 \description{
 Retrieve proportion of gene expression per sample from a
-Seurat object processed with \code{metaSeurat}
+Seurat object created with \code{Braque}
 }
 \author{
 Jose Alquicira Hernandez

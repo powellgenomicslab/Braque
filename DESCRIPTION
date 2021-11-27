@@ -1,10 +1,10 @@
-Package: metaSeurat
+Package: Braque
 Type: Package
-Title: Analysis of population-scale single cell data
+Title: Analysis of meta samples from single cell data
 Version: 0.1.0
 Author: Jose Alquicira Hernandez
 Maintainer: Jose Alquicira Hernandez <alquicirajose@gmail.com>
-Description: This package provides a set of methods to analyze population-scale single cell data
+Description: This package provides a set of methods to analyze meta samples from single cell data
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
