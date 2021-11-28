@@ -203,7 +203,7 @@ reduce_matrix <- function(object, column = TRUE){
 #' @param object A data.table object created and processed with \code{split_matrix}
 #' and \code{map_matrix}
 #' @return A list containing Seurat objects corresponding to each of the groups
-#' @importFrom SeuratObject CreateSeuratObject
+#' @importFrom SeuratObject CreateSeuratObject CreateAssayObject
 #' @export
 #' @examples
 #' data <- SeuratObject::pbmc_small
@@ -235,12 +235,12 @@ reduce_seurat <- function(object){
   res <- lapply(res, function(x){
     m <- as.data.frame(x$result)
     names(m) <- apply(x[, ..levels], 1, paste0, collapse = ".")
-    md <- as.data.frame(x[, !c("matrix", "result")])
+    md <- as.data.frame(x[, !c("matrix", "result", "prop_exp")])
     rownames(md) <- names(m)
     seurat_obj <- CreateSeuratObject(counts = m, meta.data = md)
-    prop_exp <- as.data.frame(x$prop_exp)
+    prop_exp <- as.matrix(as.data.frame(x$prop_exp))
     colnames(prop_exp) <- names(m)
-    seurat_obj@misc$prop <- prop_exp
+    seurat_obj[["prop"]] <- CreateAssayObject(prop_exp)
     seurat_obj
   })
 
